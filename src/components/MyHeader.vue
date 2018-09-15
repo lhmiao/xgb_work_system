@@ -3,11 +3,12 @@
     <span class="title" @click="toIndex" title="回到首页">电子科技大学学工部工作系统</span>
     <el-dropdown v-if="isloggedIn" @command="handleCommand">
       <span class="el-dropdown-link">
-        我的信息<i class="el-icon-arrow-down el-icon--right"></i>
+        个人信息<i class="el-icon-arrow-down el-icon--right"></i>
       </span>
       <el-dropdown-menu slot="dropdown">
+        <el-dropdown-item command="userInfo">我的信息</el-dropdown-item>
         <el-dropdown-item command="resetPassword">修改密码</el-dropdown-item>
-        <el-dropdown-item command="logout">注销</el-dropdown-item>
+        <el-dropdown-item command="logout">登出</el-dropdown-item>
       </el-dropdown-menu>
     </el-dropdown>
     <el-button type="text" v-else @click="login">登录</el-button>
@@ -27,6 +28,8 @@ export default {
     },
     handleCommand (command) {
       switch (command) {
+        case 'userInfo': this.toUserInfo()
+          return
         case 'resetPassword': this.resetPassword()
           return
         case 'logout': this.logout()
@@ -34,11 +37,16 @@ export default {
         default: this.$message.error('无效command')
       }
     },
+    toUserInfo () {
+      this.$router.push('/userInfo')
+    },
     resetPassword () {
       this.$router.push('/resetPassword')
     },
     logout () {
       // log out
+      this.$message.success('登出成功')
+      this.$router.push('/login')
     },
     login () {
       this.$router.push('/login')

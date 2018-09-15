@@ -1,17 +1,21 @@
 <template>
   <div class="my-aside">
     <el-menu router>
+      <el-menu-item index="/index">
+        <i class="el-icon-menu"></i>
+        <span slot="title">首页</span>
+      </el-menu-item>
       <el-menu-item index="/news">
         <i class="el-icon-news"></i>
         <span slot="title">通知管理</span>
       </el-menu-item>
-      <el-submenu index="document">
+      <el-submenu index="file">
         <template slot="title">
           <i class="el-icon-document"></i>
           <span>文件管理</span>
         </template>
-        <el-menu-item index="/document/download">下载区文件</el-menu-item>
-        <el-menu-item index="/document/work">工作区文件</el-menu-item>
+        <el-menu-item index="/file/download">下载区文件</el-menu-item>
+        <el-menu-item index="/file/work">工作区文件</el-menu-item>
       </el-submenu>
       <el-submenu index="user">
         <template slot="title">
@@ -26,8 +30,8 @@
           <i class="el-icon-star-off"></i>
           <span>Admin管理</span>
         </template>
-        <el-menu-item index="/manage/department">部门管理</el-menu-item>
-        <el-menu-item index="/manage/user">用户管理</el-menu-item>
+        <el-menu-item index="/admin/department">部门管理</el-menu-item>
+        <el-menu-item index="/admin/user">用户管理</el-menu-item>
       </el-submenu>
     </el-menu>
   </div>

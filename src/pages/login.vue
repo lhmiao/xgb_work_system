@@ -5,7 +5,7 @@
     <el-input class="password" type="password" v-model="password" placeholder="密码"></el-input>
     <div class="action">
       <el-checkbox v-model="checked">记住我</el-checkbox>
-      <el-button type="text" @click="resetPassword">忘记密码</el-button>
+      <!-- <el-button type="text" @click="resetPassword">忘记密码</el-button> -->
     </div>
     <el-button class="login-btn" type="primary" @click="login">登录</el-button>
   </div>
@@ -63,8 +63,8 @@ export default {
   width: 380px;
   margin: 200px auto;
   padding: 20px;
-  box-shadow: 0 0px 2px 0 rgba(0, 0, 0, .2);
-  border-radius: 4px;
+  border: 1px solid #e0e0e0;
+  border-radius: 5px;
 
   .title {
     margin-bottom: 20px;
@@ -80,7 +80,7 @@ export default {
   }
 
   .password {
-    margin-bottom: 10px;
+    margin-bottom: 20px;
   }
 
   .action {
@@ -88,7 +88,7 @@ export default {
     flex-flow: row nowrap;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 10px;
+    margin-bottom: 20px;
   }
 
   .login-btn {
