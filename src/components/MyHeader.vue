@@ -1,7 +1,7 @@
 <template>
   <div class="my-header">
     <span class="title" @click="toIndex" title="回到首页">电子科技大学学工部工作系统</span>
-    <el-dropdown v-if="islogged" @command="handleCommand">
+    <el-dropdown v-if="isloggedIn" @command="handleCommand">
       <span class="el-dropdown-link">
         我的信息<i class="el-icon-arrow-down el-icon--right"></i>
       </span>
@@ -17,8 +17,8 @@
 <script>
 export default {
   computed: {
-    islogged () {
-      return true
+    isloggedIn () {
+      return this.$store.state.isLoggedIn
     }
   },
   methods: {
@@ -57,7 +57,7 @@ export default {
   padding: 0 70px;
   font-size: 18px;
   color: #037ef3;
-  border: 1px solid #e0e0e0;
+  border-bottom: 1px solid #e0e0e0;
 
   .title {
     cursor: pointer;

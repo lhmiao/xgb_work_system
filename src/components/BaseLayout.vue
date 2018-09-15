@@ -1,9 +1,14 @@
 <template>
   <div class="baseLayout">
     <my-header></my-header>
-    <main>
-      <router-view></router-view>
-    </main>
+    <el-container>
+      <el-aside width="220px" v-if="isLoggedIn">
+        <my-aside></my-aside>
+      </el-aside>
+      <el-main>
+        <router-view></router-view>
+      </el-main>
+    </el-container>
     <my-footer></my-footer>
   </div>
 </template>
@@ -11,14 +16,21 @@
 <script>
 import myHeader from './MyHeader'
 import myFooter from './MyFooter'
+import myAside from './MyAside'
 
 export default {
+  computed: {
+    isLoggedIn () {
+      return this.$store.state.isLoggedIn
+    }
+  },
   created () {
-    // check login in here
+    // this.$store.commit('logout')
   },
   components: {
     myHeader,
-    myFooter
+    myFooter,
+    myAside
   }
 }
 </script>
@@ -36,7 +48,11 @@ export default {
   flex: 0 0 auto;
 }
 
-main {
+.el-container {
   flex: 1 0 auto;
+}
+
+.el-aside {
+  border-right: 1px solid #e0e0e0;
 }
 </style>
