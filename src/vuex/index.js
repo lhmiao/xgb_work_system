@@ -5,7 +5,14 @@ Vue.use(Vuex)
 
 const store = new Vuex.Store({
   state: {
-    isLoggedIn: true
+    isLoggedIn: true,
+    userInfo: {
+      userId: '',
+      userName: '',
+      trueName: '',
+      department: '',
+      authority: ''
+    }
   },
   mutations: {
     login (state) {
@@ -13,6 +20,13 @@ const store = new Vuex.Store({
     },
     logout (state) {
       state.isLoggedIn = false
+    },
+    initUserInfo (state, data) {
+      state.userInfo.userId = data.id
+      state.userInfo.userName = data.name
+      state.userInfo.trueName = data.true_name
+      state.userInfo.department = data.apart
+      state.userInfo.authority = data.authority
     }
   }
 })

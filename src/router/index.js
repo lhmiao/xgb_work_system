@@ -3,7 +3,7 @@ import Router from 'vue-router'
 import BaseLayout from '@/components/BaseLayout'
 import Index from '@/pages/Index'
 import Login from '@/pages/login'
-import News from '@/pages/News'
+import Notification from '@/pages/Notification'
 import File from '@/pages/File'
 import UserInfo from '@/pages/UserInfo'
 import ResetPassword from '@/pages/ResetPassword'
@@ -31,9 +31,9 @@ export default new Router({
           component: Login
         },
         {
-          path: '/news',
-          name: 'news',
-          component: News
+          path: '/notification',
+          name: 'Notification',
+          component: Notification
         },
         {
           path: '/file/:fileType',

@@ -17,6 +17,9 @@
 import myHeader from './MyHeader'
 import myFooter from './MyFooter'
 import myAside from './MyAside'
+import User from '@/apis/User'
+
+const user = new User()
 
 export default {
   computed: {
@@ -25,7 +28,18 @@ export default {
     }
   },
   created () {
-    // this.$store.commit('logout')
+    this.$store.commit('logout')
+    user.checkLogin()
+      .then(() => {
+        this.$store.commit('login')
+      })
+      .catch(err => {
+        if (!err.errCode) {
+          this.$message.error('网络错误：' + err)
+        } else {
+          this.$router.push('/login')
+        }
+      })
   },
   components: {
     myHeader,

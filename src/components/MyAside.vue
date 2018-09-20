@@ -5,7 +5,7 @@
         <i class="el-icon-menu"></i>
         <span slot="title">首页</span>
       </el-menu-item>
-      <el-menu-item index="/news">
+      <el-menu-item index="/notification">
         <i class="el-icon-news"></i>
         <span slot="title">通知管理</span>
       </el-menu-item>
@@ -25,7 +25,7 @@
         <el-menu-item index="/userInfo">我的信息</el-menu-item>
         <el-menu-item index="/resetPassword">修改密码</el-menu-item>
       </el-submenu>
-      <el-submenu index="admin">
+      <el-submenu index="admin" v-if="isAdmin">
         <template slot="title">
           <i class="el-icon-star-off"></i>
           <span>Admin管理</span>
@@ -39,6 +39,15 @@
 
 <script>
 export default {
+  computed: {
+    isAdmin () {
+      if (this.$store.state.userInfo.authority === 3) {
+        return true
+      } else {
+        return false
+      }
+    }
+  }
 }
 </script>
 

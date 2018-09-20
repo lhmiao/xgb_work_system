@@ -2,7 +2,7 @@ import axios from 'axios'
 import qs from 'qs'
 
 const clientConfig = {
-  baseURL: '/api',
+  baseURL: '/office/public',
   timeout: 10000
 }
 
@@ -25,7 +25,7 @@ export default class BaseApi {
           }
           return Promise.reject(err)
         }
-        return res.data
+        return res.data.data
       },
       err => Promise.reject(err)
     )
@@ -45,6 +45,7 @@ export default class BaseApi {
     return this.request(option)
   }
 
+  // type有三种json, form-data, x-www-form-urlencoded（实际上type只要不与前两种一样都算第三种）
   post (url, data = {}, type = 'form-data') {
     const option = {
       url,

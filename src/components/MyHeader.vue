@@ -3,7 +3,7 @@
     <span class="title" @click="toIndex" title="回到首页">电子科技大学学工部工作系统</span>
     <el-dropdown v-if="isloggedIn" @command="handleCommand">
       <span class="el-dropdown-link">
-        个人信息<i class="el-icon-arrow-down el-icon--right"></i>
+        登出及个人信息<i class="el-icon-arrow-down el-icon--right"></i>
       </span>
       <el-dropdown-menu slot="dropdown">
         <el-dropdown-item command="userInfo">我的信息</el-dropdown-item>
@@ -16,6 +16,10 @@
 </template>
 
 <script>
+import User from '@/apis/User'
+
+const user = new User()
+
 export default {
   computed: {
     isloggedIn () {
@@ -44,9 +48,15 @@ export default {
       this.$router.push('/resetPassword')
     },
     logout () {
-      // log out
-      this.$message.success('登出成功')
-      this.$router.push('/login')
+      user.logout()
+        .then(() => {
+          this.$message.success('登出成功')
+          this.$store.commit('logout')
+          this.$router.push('/login')
+        })
+        .catch(err => {
+          this.$message.error('登出失败：' + err)
+        })
     },
     login () {
       this.$router.push('/login')

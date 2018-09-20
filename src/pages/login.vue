@@ -7,17 +7,22 @@
       <el-checkbox v-model="checked">记住我</el-checkbox>
       <!-- <el-button type="text" @click="resetPassword">忘记密码</el-button> -->
     </div>
-    <el-button class="login-btn" type="primary" @click="login">登录</el-button>
+    <el-button class="login-btn" type="primary" @click="login" :loading="loading">登录</el-button>
   </div>
 </template>
 
 <script>
+import User from '@/apis/User'
+
+const user = new User()
+
 export default {
   data () {
     return {
       username: '',
       password: '',
-      checked: false
+      checked: false,
+      loading: false
     }
   },
   methods: {
@@ -41,11 +46,31 @@ export default {
       } else {
         localStorage.clear()
       }
-      this.$message('登录成功')
-      // this.$router.push('/index')
+      this.loading = true
+      const data = {
+        name: this.username,
+        passwd: this.password
+      }
+      user.login(data)
+        .then(res => {
+          this.loading = false
+          this.$store.commit('initUserInfo', res)
+          this.$store.commit('login')
+          this.$message.success('登录成功')
+          this.$router.push('/index')
+        })
+        .catch(err => {
+          this.$message.error('登录失败：' + err)
+          this.loading = false
+        })
     }
   },
   created () {
+    if (this.$store.state.isLoggedIn) {
+      this.$message.warning('您已登录，请勿重复登录')
+      this.$router.go(-1)
+      return
+    }
     if (localStorage.loginInfo === undefined) {
       this.checked = false
     } else {
