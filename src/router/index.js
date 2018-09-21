@@ -4,6 +4,7 @@ import BaseLayout from '@/components/BaseLayout'
 import Index from '@/pages/Index'
 import Login from '@/pages/login'
 import Notification from '@/pages/Notification'
+import NotificationDetail from '@/pages/NotificationDetail'
 import File from '@/pages/File'
 import UserInfo from '@/pages/UserInfo'
 import ResetPassword from '@/pages/ResetPassword'
@@ -34,6 +35,11 @@ export default new Router({
           path: '/notification',
           name: 'Notification',
           component: Notification
+        },
+        {
+          path: '/notification/:id',
+          name: 'notificationDetail',
+          component: NotificationDetail
         },
         {
           path: '/file/:fileType',

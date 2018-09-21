@@ -1,17 +1,24 @@
 <template>
   <div class="notifacation">
-    <div class="search-notification">
-      <el-select v-model="department" placeholder="请选择部门">
-        <el-option
-          v-for="(departmentName, departmentCode) in departmentOptions"
-          :label="departmentName"
-          :value="departmentCode"
-          :key="departmentCode">
-        </el-option>
-      </el-select>
-      <el-input placeholder="请输入关键词" v-model="keyword" class="keyword"></el-input>
-      <el-button type="primary" icon="el-icon-search" @click="searchNotification">搜索</el-button>
-      <el-button @click="resetSearch" class="reset-search">重置</el-button>
+    <el-breadcrumb separator-class="el-icon-arrow-right">
+      <el-breadcrumb-item to="/index">首页</el-breadcrumb-item>
+      <el-breadcrumb-item>通知管理</el-breadcrumb-item>
+    </el-breadcrumb>
+    <div class="top">
+      <div class="search-notification">
+        <el-select v-model="department" placeholder="请选择部门">
+          <el-option
+            v-for="(departmentName, departmentCode) in departmentOptions"
+            :label="departmentName"
+            :value="departmentCode"
+            :key="departmentCode">
+          </el-option>
+        </el-select>
+        <el-input placeholder="请输入关键词" v-model="keyword" class="keyword"></el-input>
+        <el-button type="primary" icon="el-icon-search" @click="searchNotification">搜索</el-button>
+        <el-button @click="resetSearch" class="reset-search">重置</el-button>
+      </div>
+      <el-button type="success" icon="el-icon-plus">发布通知</el-button>
     </div>
     <div class="search-data">
       <el-table
@@ -34,26 +41,18 @@
             {{ scope.row.apart | formatDepartment }}
           </template>
         </el-table-column>
-        <el-table-column label="标题">
-          <template slot-scope="scope">
-            <el-popover
-              trigger="click"
-              placement="top"
-              title="标题"
-              :content="scope.row.title">
-              <el-button slot="reference" type="text" size="mini">点击查看详情</el-button>
-            </el-popover>
-          </template>
+        <el-table-column
+          prop="title"
+          label="标题"
+          width="500">
         </el-table-column>
         <el-table-column label="内容">
           <template slot-scope="scope">
-            <el-popover
-              trigger="click"
-              placement="top"
-              title="内容"
-              :content="scope.row.content">
-              <el-button slot="reference" type="text" size="mini">点击查看详情</el-button>
-            </el-popover>
+            <el-button
+              type="text"
+              @click="toNotificationDetail(scope.row.id)">
+              查看详情
+            </el-button>
           </template>
         </el-table-column>
         <el-table-column label="操作">
@@ -71,7 +70,7 @@
       <el-pagination
         @current-change="handleCurrentChange"
         layout="prev, pager, next, jumper"
-        :page-count="10">
+        :page-count="pageCount">
       </el-pagination>
     </div>
   </div>
@@ -90,16 +89,8 @@ export default {
       keyword: '',
       departmentOptions: departments,
       loading: false,
-      searchData: [
-        {
-          date: '2018-06-05 19:00:25',
-          id: 123,
-          author: '管理员',
-          apart: 1,
-          title: '这是标题',
-          content: '这是内容'
-        }
-      ]
+      searchData: [],
+      pageCount: 0
     }
   },
   methods: {
@@ -120,13 +111,17 @@ export default {
       }
       notification.search(params)
         .then(res => {
-          console.log(res)
+          this.searchData = res.content
+          this.pageCount = res.all_pages
           this.loading = false
         })
         .catch(err => {
           this.$message.error('搜索失败：' + err)
           this.loading = false
         })
+    },
+    toNotificationDetail (id) {
+      this.$router.push(`/notification/${id}`)
     },
     handleDelete (index, row) {
       const params = {
@@ -157,10 +152,21 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.el-breadcrumb {
+  margin-bottom: 20px;
+}
+
+.top {
+  display: flex;
+  flex-flow: row nowrap;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
 .search-notification {
   display: flex;
   flex-flow: row nowrap;
-  margin: 20px 0;
 
   .el-select {
     flex: 0 0 150px;

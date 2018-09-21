@@ -6,7 +6,9 @@
         <my-aside></my-aside>
       </el-aside>
       <el-main>
-        <router-view></router-view>
+        <keep-alive>
+          <router-view></router-view>
+        </keep-alive>
       </el-main>
     </el-container>
     <my-footer></my-footer>
@@ -30,8 +32,9 @@ export default {
   created () {
     this.$store.commit('logout')
     user.checkLogin()
-      .then(() => {
+      .then(res => {
         this.$store.commit('login')
+        this.$store.commit('initUserInfo', res)
       })
       .catch(err => {
         if (!err.errCode) {
