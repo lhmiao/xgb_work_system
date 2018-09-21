@@ -18,17 +18,25 @@
         <el-button type="primary" icon="el-icon-search" @click="searchNotification">搜索</el-button>
         <el-button @click="resetSearch" class="reset-search">重置</el-button>
       </div>
-      <el-button type="success" icon="el-icon-plus">发布通知</el-button>
+      <el-button type="success" icon="el-icon-plus" @click="dialogVisible = true">发布通知</el-button>
+      <el-dialog
+        title="发布新通知"
+        :visible.sync="dialogVisible"
+        width="550px">
+        <el-input class="new-title-input" v-model="newTitle" placeholder="标题"></el-input>
+        <el-input type="textarea" v-model="newContent" placeholder="内容" :autosize="{ minRows: 3}"></el-input>
+        <span slot="footer">
+          <el-button @click="dialogVisible = false">取 消</el-button>
+          <el-button type="primary" @click="uploadNewNotification" :loading="dialogLoading">确 定</el-button>
+        </span>
+      </el-dialog>
     </div>
-    <div class="search-data">
+    <div class="search-data" v-if="hasSearched">
       <el-table
         v-loading="loading"
         :data="searchData"
         border>
-        <el-table-column label="日期">
-          <template slot-scope="scope">
-            {{ scope.row.date | formatDate }}
-          </template>
+        <el-table-column label="日期" prop="date" :formatter="formatDate">
         </el-table-column>
         <el-table-column prop="id" label="id">
         </el-table-column>
@@ -46,7 +54,7 @@
           label="标题"
           width="500">
         </el-table-column>
-        <el-table-column label="内容">
+        <el-table-column label="内容" fixed="right">
           <template slot-scope="scope">
             <el-button
               type="text"
@@ -55,7 +63,7 @@
             </el-button>
           </template>
         </el-table-column>
-        <el-table-column label="操作">
+        <el-table-column label="操作" fixed="right">
            <template slot-scope="scope">
             <!-- <el-button
               size="mini"
@@ -70,7 +78,8 @@
       <el-pagination
         @current-change="handleCurrentChange"
         layout="prev, pager, next, jumper"
-        :page-count="pageCount">
+        :page-count="pageCount"
+        :current-page="currentPage">
       </el-pagination>
     </div>
   </div>
@@ -89,8 +98,14 @@ export default {
       keyword: '',
       departmentOptions: departments,
       loading: false,
+      dialogVisible: false,
+      dialogLoading: false,
+      newTitle: '',
+      newContent: '',
+      hasSearched: false,
       searchData: [],
-      pageCount: 0
+      pageCount: 0,
+      currentPage: 1
     }
   },
   methods: {
@@ -98,14 +113,15 @@ export default {
       this.department = ''
       this.keyword = ''
     },
-    searchNotification (e, page = 1) {
+    searchNotification () {
       if (!(this.department || this.keyword)) {
         this.$message.error('请选择部门或输入关键词')
         return
       }
       this.loading = true
+      this.hasSearched = true
       const params = {
-        page,
+        page: this.currentPage,
         keywords: this.keyword,
         apart: this.department
       }
@@ -120,30 +136,65 @@ export default {
           this.loading = false
         })
     },
+    uploadNewNotification () {
+      if (!(this.newTitle)) {
+        this.$message.error('请输入标题')
+        return
+      } else if (!(this.newContent)) {
+        this.$message.error('请输入内容')
+        return
+      }
+      this.dialogLoading = true
+      const data = {
+        title: this.newTitle,
+        content: this.newContent
+      }
+      notification.upload(data)
+        .then(() => {
+          this.dialogVisible = false
+          this.dialogLoading = false
+          this.newTitle = ''
+          this.newContent = ''
+          this.$message.success('发布新通知成功')
+        })
+        .catch(err => {
+          this.dialogLoading = false
+          this.$message.error('发布新通知失败：' + err)
+        })
+    },
     toNotificationDetail (id) {
       this.$router.push(`/notification/${id}`)
     },
+    formatDate (row, column, cellValue, index) {
+      return cellValue.slice(0, 10)
+    },
     handleDelete (index, row) {
-      const params = {
-        id: row.id
-      }
-      notification.delete(params)
-        .then(() => {
-          this.$message.success('删除成功')
-          this.searchData.splice(index, 1)
-        })
-        .catch(err => {
-          this.$message.error('删除失败：' + err)
-        })
+      this.$confirm('此操作将永久删除该通知, 是否继续?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        const params = {
+          id: row.id
+        }
+        return notification.delete(params)
+      }).then(() => {
+        this.$message.success('删除成功')
+        this.searchData.splice(index, 1)
+      }).catch(err => {
+        if (err.toString() === 'cancel') {
+          this.$message.info('取消删除')
+          return
+        }
+        this.$message.error('删除失败：' + err)
+      })
     },
     handleCurrentChange (page) {
-      this.searchNotification(page)
+      this.currentPage = page
+      this.searchNotification()
     }
   },
   filters: {
-    formatDate (date) {
-      return date.slice(0, 10)
-    },
     formatDepartment (departmentCode) {
       return departments[departmentCode] || '未知部门'
     }
@@ -161,6 +212,10 @@ export default {
   flex-flow: row nowrap;
   justify-content: space-between;
   align-items: center;
+  margin-bottom: 20px;
+}
+
+.new-title-input {
   margin-bottom: 20px;
 }
 

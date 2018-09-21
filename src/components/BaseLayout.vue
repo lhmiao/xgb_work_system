@@ -6,7 +6,7 @@
         <my-aside></my-aside>
       </el-aside>
       <el-main>
-        <keep-alive>
+        <keep-alive exclude="notificationDetail">
           <router-view></router-view>
         </keep-alive>
       </el-main>
