@@ -5,6 +5,7 @@ Vue.use(Vuex)
 
 const store = new Vuex.Store({
   state: {
+    // 为防止用户在需要登录的页面刷新导致被弹回login界面，所以设为true，会在BaseLayout组件created时logout，然后进行checkLogin
     isLoggedIn: true,
     userInfo: {
       userId: '',

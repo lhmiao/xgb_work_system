@@ -11,7 +11,7 @@ Vue.config.productionTip = false
 Vue.use(ElementUI)
 
 // 无需登录即可前往的页面的路径
-const unrequireLoginPath = ['/login', '/resetPassword']
+const unrequireLoginPath = ['/login']
 router.beforeEach((to, from, next) => {
   if (unrequireLoginPath.includes(to.path)) {
     next()
