@@ -10,9 +10,17 @@
         修改密码
       </div>
       <div class="reset-password-form">
-        <el-input v-model="newPassword1" placeholder="请输入新密码"></el-input>
-        <el-input v-model="newPassword2" placeholder="请再次输入新密码"></el-input>
-        <el-button type="primary" @click="resetPassword">确认修改</el-button>
+        <el-input
+          type="password"
+          v-model="newPassword1"
+          placeholder="请输入新密码"></el-input>
+        <el-input
+          type="password"
+          v-model="newPassword2"
+          placeholder="请再次输入新密码"></el-input>
+        <el-button
+          type="primary"
+          @click="resetPassword">确认修改</el-button>
       </div>
     </el-card>
   </div>
@@ -24,6 +32,7 @@ import User from '@/apis/User'
 const user = new User()
 
 export default {
+  name: 'resetPassword',
   data () {
     return {
       newPassword1: '',
@@ -38,12 +47,12 @@ export default {
   methods: {
     resetPassword () {
       if (!this.newPassword1) {
-        this.$message.error('请输入的密码')
+        this.$message.warning('请输入的密码')
         return
       } else if (!this.newPassword2) {
-        this.$message.error('请再次输入的密码')
+        this.$message.warning('请再次输入的密码')
       } else if (this.newPassword1 !== this.newPassword2) {
-        this.$message.error('两次输入的密码不一致')
+        this.$message.warning('两次输入的密码不一致')
         return
       }
       const data = {

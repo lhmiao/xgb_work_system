@@ -9,7 +9,10 @@
       <div>
         日期：<span>{{ date }}</span>
       </div>
-      <el-button type="danger" size="medium" @click="handleDelete">删除</el-button>
+      <el-button
+        type="danger"
+        size="medium"
+        @click="handleDelete">删除</el-button>
     </div>
     <div class="notification-detail-item">
       id：<span>{{ id }}</span>

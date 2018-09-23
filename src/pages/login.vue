@@ -1,13 +1,26 @@
 <template>
   <div class="login">
     <div class="title">登录</div>
-    <el-input class="username" v-model="username" placeholder="用户名"></el-input>
-    <el-input class="password" type="password" v-model="password" placeholder="密码"></el-input>
+    <el-input
+      class="username"
+      v-model="username"
+      placeholder="用户名"></el-input>
+    <el-input
+      class="password"
+      type="password"
+      v-model="password"
+      placeholder="密码"></el-input>
     <div class="action">
       <el-checkbox v-model="checked">记住我</el-checkbox>
-      <!-- <el-button type="text" @click="resetPassword">忘记密码</el-button> -->
+      <!-- <el-button
+        type="text"
+        @click="resetPassword">忘记密码</el-button> -->
     </div>
-    <el-button class="login-btn" type="primary" @click="login" :loading="loading">登录</el-button>
+    <el-button
+      class="login-btn"
+      type="primary"
+      @click="login"
+      :loading="loading">登录</el-button>
   </div>
 </template>
 
@@ -31,10 +44,10 @@ export default {
     },
     login () {
       if (this.username === '') {
-        this.$message.error('请输入用户名')
+        this.$message.warning('请输入用户名')
         return
       } else if (this.password === '') {
-        this.$message.error('请输入密码')
+        this.$message.warning('请输入密码')
         return
       }
       if (this.checked) {

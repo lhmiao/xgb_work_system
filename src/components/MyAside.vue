@@ -15,7 +15,7 @@
           <span>文件管理</span>
         </template>
         <el-menu-item index="/file/download">下载区文件</el-menu-item>
-        <el-menu-item index="/file/work">工作区文件</el-menu-item>
+        <el-menu-item index="/file/workfile">工作区文件</el-menu-item>
       </el-submenu>
       <el-submenu index="user">
         <template slot="title">
