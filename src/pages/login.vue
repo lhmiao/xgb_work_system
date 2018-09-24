@@ -30,6 +30,7 @@ import User from '@/apis/User'
 const user = new User()
 
 export default {
+  name: 'login',
   data () {
     return {
       username: '',

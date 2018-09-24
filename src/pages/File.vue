@@ -45,7 +45,7 @@
         <span class="file-info">
           {{ file ? file.name : "当前尚未选择文件" }}
         </span>
-        <p class="tip">
+        <p class="tips">
           允许的文件类型：
           jpg, gif, jpeg, rar, pdf, zip, doc, docx, xls, xlsx, ppt, pptx
         </p>
@@ -297,7 +297,7 @@ export default {
   display: none;
 }
 
-.tip {
+.tips {
   margin-left: 10px;
   font-size: 13px;
   color: #888;
