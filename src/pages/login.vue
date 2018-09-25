@@ -67,7 +67,6 @@ export default {
       }
       user.login(data)
         .then(res => {
-          this.loading = false
           this.$store.commit('initUserInfo', res)
           this.$store.commit('login')
           this.$message.success('登录成功')
@@ -75,6 +74,8 @@ export default {
         })
         .catch(err => {
           this.$message.error('登录失败：' + err)
+        })
+        .finally(() => {
           this.loading = false
         })
     }

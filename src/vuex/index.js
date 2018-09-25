@@ -21,6 +21,10 @@ const store = new Vuex.Store({
     },
     logout (state) {
       state.isLoggedIn = false
+      let keys = Object.keys(state.userInfo)
+      for (let key of keys) {
+        state.userInfo[key] = ''
+      }
     },
     initUserInfo (state, data) {
       state.userInfo.userId = data.id

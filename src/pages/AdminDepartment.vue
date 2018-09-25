@@ -9,28 +9,28 @@
       <el-button
         type="success"
         icon="el-icon-plus"
-        @click="openAddDialog">添加新部门</el-button>
+        @click="openDialogAdd">添加新部门</el-button>
       <el-dialog
         title="添加新部门"
-        :visible.sync="addDialogVisible"
+        :visible.sync="dialogAddVisible"
         width="550px">
         <div class="department-dialog-form">
           <el-select
-            v-model="newType"
+            v-model="typeNew"
             placeholder="请选择新部门类型">
             <el-option
-              v-for="(value, key) in departmentTypes"
-              :key="key"
-              :label="value"
-              :value="key">
+              v-for="(type, code) in departmentType"
+              :key="code"
+              :label="type"
+              :value="code">
             </el-option>
           </el-select>
           <el-input
-            v-model="newName"
+            v-model="nameNew"
             placeholder="新部门名称"></el-input>
         </div>
         <span slot="footer">
-          <el-button @click="addDialogVisible = false">取 消</el-button>
+          <el-button @click="dialogAddVisible = false">取 消</el-button>
           <el-button
             type="primary"
             @click="addDepartment"
@@ -57,7 +57,7 @@
         <template slot-scope="scope">
           <el-button
             size="mini"
-            @click="openEditDialog(scope.row)">修改</el-button>
+            @click="openDialogEdit(scope.row)">修改</el-button>
           <el-button
             size="mini"
             type="danger"
@@ -67,26 +67,26 @@
     </el-table>
     <el-dialog
       title="修改部门信息"
-      :visible.sync="editDialogVisible"
+      :visible.sync="dialogEditVisible"
       width="550px">
       <div class="department-dialog-form">
         <el-select
-          v-model="editType"
+          v-model="typeEdit"
           placeholder="请选择部门类型">
           <el-option
-            v-for="(value, key) in departmentTypes"
-            :key="key"
-            :label="value"
-            :value="key">
+            v-for="(type, code) in departmentType"
+            :key="code"
+            :label="type"
+            :value="code">
           </el-option>
         </el-select>
         <el-input
-          v-model="editName"
+          v-model="nameEdit"
           placeholder="部门名称"></el-input>
       </div>
       <p class="tips">部门名称和类型至少要修改一个，单项不修改则使用旧的名称或类型</p>
       <span slot="footer">
-        <el-button @click="editDialogVisible = false">取 消</el-button>
+        <el-button @click="dialogEditVisible = false">取 消</el-button>
         <el-button
           type="primary"
           @click="editDepartment"
@@ -104,21 +104,21 @@
 
 <script>
 import Admin from '@/apis/Admin'
-import departmentTypes from '@/constant/departmentType'
+import departmentType from '@/constant/departmentType'
 
 const admin = new Admin()
 
 export default {
   data () {
     return {
-      newName: '',
-      newType: '',
-      editName: '',
-      editType: '',
-      editRow: null,
-      departmentTypes,
-      addDialogVisible: false,
-      editDialogVisible: false,
+      nameNew: '',
+      typeNew: '',
+      nameEdit: '',
+      typeEdit: '',
+      rowEdit: null,
+      departmentType,
+      dialogAddVisible: false,
+      dialogEditVisible: false,
       dialogLoading: false,
       departmentData: [],
       departmentDataLoading: false,
@@ -127,80 +127,88 @@ export default {
     }
   },
   methods: {
-    openAddDialog () {
-      this.newName = ''
-      this.newType = ''
-      this.addDialogVisible = true
+    openDialogAdd () {
+      this.nameNew = ''
+      this.typeNew = ''
+      this.dialogAddVisible = true
     },
-    openEditDialog (editRow) {
-      this.editName = ''
-      this.editType = ''
-      this.editDialogVisible = true
-      this.editRow = editRow
+    openDialogEdit (rowEdit) {
+      this.nameEdit = ''
+      this.typeEdit = ''
+      this.dialogEditVisible = true
+      this.rowEdit = rowEdit
     },
     addDepartment () {
-      if (!this.newType) {
+      if (!this.typeNew) {
         this.$message.warning('请选择新部门类型')
         return
-      } else if (!this.newName) {
+      } else if (!this.nameNew) {
         this.$message.warning('请输入新部门名称')
         return
       }
       this.dialogLoading = true
       const data = {
-        apart_name: this.newName,
-        apart_kind: this.newType
+        apart_name: this.nameNew,
+        apart_kind: this.typeNew
       }
       admin.addDepartment(data)
         .then(() => {
-          this.dialogLoading = false
-          this.addDialogVisible = false
+          this.dialogAddVisible = false
           this.$message.success('添加新部门成功')
           this.loadDepartmentData(1)
         })
         .catch(err => {
+          if (err.errCode === 2) {
+            this.$store.commit('logout')
+            this.$router.push('/login')
+            this.$message.info('登录状态已过期，请重新登录')
+          } else {
+            this.$message.error('添加新部门失败：' + err)
+          }
+        })
+        .finally(() => {
           this.dialogLoading = false
-          this.$message.error('添加新部门失败：' + err)
         })
     },
     editDepartment () {
-      const id = this.editRow.id
-      const oldName = this.editRow.apart_name
-      const oldType = this.editRow.apart_kind.toString()
-      if (!(this.editType || this.editName)) {
-        this.$message.warning('请选择新的部门类型或部门名称')
+      const id = this.rowEdit.id
+      const nameOld = this.rowEdit.apart_name
+      const typeOld = this.rowEdit.apart_kind.toString()
+      if (!(this.typeEdit || this.nameEdit)) {
+        this.$message.warning('请输入修改项')
         return
       }
-      if ((this.editName === oldName) && (this.editType === oldType)) {
-        this.$message.warning('新的名称和类型与旧的名称和类型相同，无效修改')
+      if ((this.nameEdit === nameOld) && (this.typeEdit === typeOld)) {
+        this.$message.warning('新的名称和类型与旧的名称和类型相同，请核对修改项')
         return
       }
       this.dialogLoading = true
-      const data = Object.assign(
-        {
-          id,
-          apart_name: oldName,
-          apart_kind: oldType
-        },
-        {
-          apart_name: this.editName,
-          apart_kind: this.editType
-        }
-      )
+      const data = {
+        id,
+        apart_name: this.nameEdit || nameOld,
+        apart_kind: this.typeEdit || typeOld
+      }
       admin.editDepartment(data)
         .then(() => {
-          this.dialogLoading = false
-          this.editDialogVisible = false
+          this.dialogEditVisible = false
           this.$message.success('修改部门信息成功')
           this.loadDepartmentData(this.currentPage)
         })
         .catch(err => {
+          if (err.errCode === 2) {
+            this.$store.commit('logout')
+            this.$router.push('/login')
+            this.$message.info('登录状态已过期，请重新登录')
+          } else {
+            this.$message.error('修改部门信息失败：' + err)
+          }
+        })
+        .finally(() => {
           this.dialogLoading = false
-          this.$message.error('修改部门信息失败：' + err)
         })
     },
     getDepartmentType (row, column, cellValue, index) {
-      return this.departmentTypes[cellValue]
+      return this.departmentType[cellValue]
     },
     handleDelete (index, id) {
       this.$confirm('此操作将永久删除该部门, 是否继续?', '提示', {
@@ -220,7 +228,13 @@ export default {
           this.$message.info('取消删除')
           return
         }
-        this.$message.error('删除失败：' + err)
+        if (err.errCode === 2) {
+          this.$store.commit('logout')
+          this.$router.push('/login')
+          this.$message.info('登录状态已过期，请重新登录')
+        } else {
+          this.$message.error('删除失败：' + err)
+        }
       })
     },
     handleCurrentChange (page) {
@@ -236,11 +250,18 @@ export default {
         .then(res => {
           this.departmentData = res.content
           this.pageCount = res.all_pages
-          this.departmentDataLoading = false
         })
         .catch(err => {
+          if (err.errCode === 2) {
+            this.$store.commit('logout')
+            this.$router.push('/login')
+            this.$message.info('登录状态已过期，请重新登录')
+          } else {
+            this.$message.error('加载部门信息失败' + err)
+          }
+        })
+        .finally(() => {
           this.departmentDataLoading = false
-          this.$message.error('加载部门信息失败' + err)
         })
     }
   },

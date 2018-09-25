@@ -65,7 +65,13 @@ export default {
           this.$router.push('/login')
         })
         .catch(err => {
-          this.$message.error('修改密码失败：' + err)
+          if (err.errCode === 2) {
+            this.$store.commit('logout')
+            this.$router.push('/login')
+            this.$message.info('登录状态已过期，请重新登录')
+          } else {
+            this.$message.error('修改密码失败：' + err)
+          }
         })
     }
   }

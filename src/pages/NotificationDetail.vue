@@ -75,7 +75,13 @@ export default {
           this.$message.info('取消删除')
           return
         }
-        this.$message.error('删除失败：' + err)
+        if (err.errCode === 2) {
+          this.$store.commit('logout')
+          this.$router.push('/login')
+          this.$message.info('登录状态已过期，请重新登录')
+        } else {
+          this.$message.error('删除失败：' + err)
+        }
       })
     }
   },
@@ -98,7 +104,13 @@ export default {
         this.content = this.formatContent(res.content)
       })
       .catch(err => {
-        this.$message.error('系统错误：' + err)
+        if (err.errCode === 2) {
+          this.$store.commit('logout')
+          this.$router.push('/login')
+          this.$message.info('登录状态已过期，请重新登录')
+        } else {
+          this.$message.error('系统错误：' + err)
+        }
       })
   }
 }

@@ -158,10 +158,17 @@ export default {
         .then(res => {
           this.searchData = res.content
           this.pageCount = res.all_pages
-          this.searchDataLoading = false
         })
         .catch(err => {
-          this.$message.error('搜索失败：' + err)
+          if (err.errCode === 2) {
+            this.$store.commit('logout')
+            this.$router.push('/login')
+            this.$message.info('登录状态已过期，请重新登录')
+          } else {
+            this.$message.error('搜索失败：' + err)
+          }
+        })
+        .finally(() => {
           this.searchDataLoading = false
         })
     },
@@ -186,14 +193,21 @@ export default {
       notification.upload(data)
         .then(() => {
           this.dialogVisible = false
-          this.dialogLoading = false
           this.newTitle = ''
           this.newContent = ''
           this.$message.success('发布新通知成功')
         })
         .catch(err => {
+          if (err.errCode === 2) {
+            this.$store.commit('logout')
+            this.$router.push('/login')
+            this.$message.info('登录状态已过期，请重新登录')
+          } else {
+            this.$message.error('发布新通知失败：' + err)
+          }
+        })
+        .finally(() => {
           this.dialogLoading = false
-          this.$message.error('发布新通知失败：' + err)
         })
     },
     toNotificationDetail (id) {
@@ -223,7 +237,13 @@ export default {
           this.$message.info('取消删除')
           return
         }
-        this.$message.error('删除失败：' + err)
+        if (err.errCode === 2) {
+          this.$store.commit('logout')
+          this.$router.push('/login')
+          this.$message.info('登录状态已过期，请重新登录')
+        } else {
+          this.$message.error('删除失败：' + err)
+        }
       })
     },
     handleCurrentChange (page) {

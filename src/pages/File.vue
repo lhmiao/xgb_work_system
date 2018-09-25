@@ -78,9 +78,16 @@
           label="发布者">
         </el-table-column>
         <el-table-column
-          prop="file"
           label="文件名"
           width="500">
+          <template slot-scope="scope">
+            <span
+              class="file-name"
+              title="点击下载该文件"
+              @click="handleDownload(scope.row.id, scope.row.file)">
+              {{ scope.row.file }}
+            </span>
+          </template>
         </el-table-column>
         <el-table-column
           label="操作"
@@ -155,10 +162,17 @@ export default {
         .then(res => {
           this.searchData = res.content
           this.pageCount = res.all_pages
-          this.loading = false
         })
         .catch(err => {
-          this.$message.error('搜索失败：' + err)
+          if (err.errCode === 2) {
+            this.$store.commit('logout')
+            this.$router.push('/login')
+            this.$message.info('登录状态已过期，请重新登录')
+          } else {
+            this.$message.error('搜索失败：' + err)
+          }
+        })
+        .finally(() => {
           this.loading = false
         })
     },
@@ -185,13 +199,20 @@ export default {
       this.fileClient.upload(data)
         .then(() => {
           this.dialogVisible = false
-          this.dialogLoading = false
           this.file = null
           this.$message.success('上传文件成功')
         })
         .catch(err => {
+          if (err.errCode === 2) {
+            this.$store.commit('logout')
+            this.$router.push('/login')
+            this.$message.info('登录状态已过期，请重新登录')
+          } else {
+            this.$message.error('上传文件失败：' + err)
+          }
+        })
+        .finally(() => {
           this.dialogLoading = false
-          this.$message.error('上传文件失败：' + err)
         })
     },
     formatDate (row, column, cellValue, index) {
@@ -209,8 +230,10 @@ export default {
           this.downloadFile(res, fileName)
         })
         .catch(err => {
-          if (err.errCode === 1) {
-            this.$message.warning('该文件不存在')
+          if (err.errCode === 2) {
+            this.$store.commit('logout')
+            this.$router.push('/login')
+            this.$message.info('登录状态已过期，请重新登录')
           } else {
             this.$message.error('下载失败：' + err)
           }
@@ -241,7 +264,13 @@ export default {
           this.$message.info('取消删除')
           return
         }
-        this.$message.error('删除失败：' + err)
+        if (err.errCode === 2) {
+          this.$store.commit('logout')
+          this.$router.push('/login')
+          this.$message.info('登录状态已过期，请重新登录')
+        } else {
+          this.$message.error('删除失败：' + err)
+        }
       })
     },
     handleCurrentChange (page) {
@@ -320,6 +349,14 @@ export default {
 
 .el-table {
   margin-bottom: 20px;
+}
+
+.file-name {
+  cursor: pointer;
+
+  &:hover {
+    text-decoration: underline;
+  }
 }
 
 .el-pagination {
