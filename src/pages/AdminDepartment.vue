@@ -178,16 +178,16 @@ export default {
         this.$message.warning('请输入修改项')
         return
       }
-      if ((this.nameEdit === nameOld) && (this.typeEdit === typeOld)) {
-        this.$message.warning('新的名称和类型与旧的名称和类型相同，请核对修改项')
-        return
-      }
-      this.dialogLoading = true
       const data = {
         id,
         apart_name: this.nameEdit || nameOld,
         apart_kind: this.typeEdit || typeOld
       }
+      if ((data.apart_name === nameOld) && (data.apart_kind === typeOld)) {
+        this.$message.warning('选择修改的信息与该部门原来的信息一致，请核对修改项')
+        return
+      }
+      this.dialogLoading = true
       admin.editDepartment(data)
         .then(() => {
           this.dialogEditVisible = false

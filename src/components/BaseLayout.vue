@@ -39,9 +39,8 @@ export default {
       .catch(err => {
         if (!err.errCode) {
           this.$message.error('网络错误：' + err)
-        } else {
-          this.$router.push('/login')
         }
+        this.$router.push('/login')
       })
   },
   components: {

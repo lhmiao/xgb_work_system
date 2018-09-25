@@ -100,11 +100,14 @@ export default {
 
 <style lang="scss" scoped>
 .login {
+  position: relative;
+  top: 50%;
+  left: 50%;
   width: 380px;
-  margin: 200px auto;
   padding: 20px;
   border: 1px solid #e0e0e0;
   border-radius: 5px;
+  transform: translate(-50%, -50%);
 
   .title {
     margin-bottom: 20px;

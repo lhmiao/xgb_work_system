@@ -266,7 +266,12 @@ export default {
       admin.addUser(data)
         .then(() => {
           this.dialogAddVisible = false
-          this.$message.success('添加新用户成功，请重新搜索改用户或刷新页面确认结果')
+          if (this.departmentSearch) {
+            this.$message.success('添加新用户成功')
+            this.searchUser()
+          } else {
+            this.$message.success('添加新用户成功，请重新搜索该用户或刷新页面确认结果')
+          }
         })
         .catch(err => {
           if (err.errCode === 2) {
@@ -292,28 +297,33 @@ export default {
     },
     editUser () {
       const id = this.rowEdit.id
-      const departmentOld = this.rowEdit.apart
-      const authorityOld = this.rowEdit.authority
+      const departmentOld = this.rowEdit.apart.toString()
+      const authorityOld = this.rowEdit.authority.toString()
       const trueNameOld = this.rowEdit.true_name
       if (!(this.departmentEdit || this.authorityEdit || this.trueNameEdit)) {
         this.$message.warning('请输入修改项')
         return
       }
-      if ((this.departmentEdit === departmentOld) && (this.authorityEdit === authorityOld) && (this.trueNameEdit === trueNameOld)) {
-        this.$message.warning('新旧用户信息相同，请核对修改项')
-        return
-      }
-      this.dialogLoading = true
       const data = {
         id,
         apart: this.departmentEdit || departmentOld,
         authority: this.authorityEdit || authorityOld,
         true_name: this.trueNameEdit || trueNameOld
       }
+      if ((data.apart === departmentOld) && (data.authority === authorityOld) && (data.true_name === trueNameOld)) {
+        this.$message.warning('选择修改的信息与该用户原来的信息一致，请核对修改项')
+        return
+      }
+      this.dialogLoading = true
       admin.editUser(data)
         .then(() => {
           this.dialogEditVisible = false
-          this.$message.success('修改用户信息成功，请重新搜索改用户或刷新页面确认结果')
+          if (this.departmentSearch) {
+            this.$message.success('修改用户信息成功')
+            this.searchUser()
+          } else {
+            this.$message.success('修改用户信息成功，请重新搜索该用户或刷新页面确认结果')
+          }
         })
         .catch(err => {
           if (err.errCode === 2) {
@@ -406,6 +416,12 @@ export default {
 
 .el-table {
   margin-bottom: 20px;
+}
+
+.tips {
+  margin-left: 20px;
+  font-size: 13px;
+  color: #888;
 }
 
 .el-pagination {
