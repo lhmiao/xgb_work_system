@@ -3,12 +3,15 @@
 import Vue from 'vue'
 import App from './App'
 import router from './router'
-import ElementUI from 'element-ui'
-import 'element-ui/lib/theme-chalk/index.css'
+// element-ui按需引入，配置引入组件见./elementUIConfig/index.js
+import './elementUIConfig'
+// element-ui完整引入
+// import ElementUI from 'element-ui'
+// import 'element-ui/lib/theme-chalk/index.css'
 import store from './vuex'
 
 Vue.config.productionTip = false
-Vue.use(ElementUI)
+// Vue.use(ElementUI)
 
 // 无需登录即可前往的页面的路径
 const unrequireLoginPath = ['/login']

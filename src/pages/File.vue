@@ -200,7 +200,12 @@ export default {
         .then(() => {
           this.dialogVisible = false
           this.file = null
-          this.$message.success('上传文件成功')
+          if (this.department || this.keyword) {
+            this.$message.success('上传文件成功')
+            this.searchFile()
+          } else {
+            this.$message.success('上传文件成功，请重新搜索该文件或刷新页面确认')
+          }
         })
         .catch(err => {
           if (err.errCode === 2) {

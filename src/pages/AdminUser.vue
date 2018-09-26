@@ -265,6 +265,11 @@ export default {
       }
       admin.addUser(data)
         .then(() => {
+          this.departmentAdd = ''
+          this.authorityAdd = ''
+          this.nameAdd = ''
+          this.trueNameAdd = ''
+          this.passwordAdd = ''
           this.dialogAddVisible = false
           if (this.departmentSearch) {
             this.$message.success('添加新用户成功')
@@ -317,6 +322,11 @@ export default {
       this.dialogLoading = true
       admin.editUser(data)
         .then(() => {
+          this.departmentEdit = ''
+          this.authorityEdit = ''
+          this.nameEdit = ''
+          this.trueNameEdit = ''
+          this.passwordEdit = ''
           this.dialogEditVisible = false
           if (this.departmentSearch) {
             this.$message.success('修改用户信息成功')

@@ -153,6 +153,8 @@ export default {
       }
       admin.addDepartment(data)
         .then(() => {
+          this.nameNew = ''
+          this.typeNew = ''
           this.dialogAddVisible = false
           this.$message.success('添加新部门成功')
           this.loadDepartmentData(1)
@@ -190,6 +192,8 @@ export default {
       this.dialogLoading = true
       admin.editDepartment(data)
         .then(() => {
+          this.nameEdit = ''
+          this.typeEdit = ''
           this.dialogEditVisible = false
           this.$message.success('修改部门信息成功')
           this.loadDepartmentData(this.currentPage)

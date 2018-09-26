@@ -195,7 +195,12 @@ export default {
           this.dialogVisible = false
           this.newTitle = ''
           this.newContent = ''
-          this.$message.success('发布新通知成功')
+          if (this.department || this.keyword) {
+            this.$message.success('发布新通知成功')
+            this.searchNotification()
+          } else {
+            this.$message.success('发布新通知成功，请重新搜索该通知或刷新页面确认')
+          }
         })
         .catch(err => {
           if (err.errCode === 2) {

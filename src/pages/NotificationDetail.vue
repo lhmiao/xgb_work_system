@@ -69,7 +69,8 @@ export default {
         }
         return notification.delete(params)
       }).then(() => {
-        this.$message.success('删除成功')
+        this.$message.success('删除成功，请重新搜索该通知或刷新页面确认')
+        this.$router.replace('/notification')
       }).catch(err => {
         if (err.toString() === 'cancel') {
           this.$message.info('取消删除')
