@@ -37,10 +37,25 @@
         title="上传文件"
         :visible.sync="dialogVisible"
         width="550px">
+        <div
+          class="to-department-select"
+          v-if="isWorkFile">
+          <el-select
+            v-model="toDepartment"
+            placeholder="请选择接收部门">
+            <el-option
+              v-for="(departmentName, departmentCode) in departmentOptions"
+              :label="departmentName"
+              :value="departmentCode"
+              :key="departmentCode">
+            </el-option>
+          </el-select>
+        </div>
         <label class="file-input-label" for="fileInput">选择文件</label>
         <input
           id="fileInput"
           type="file"
+          ref="fileInput"
           @change="addFile">
         <span class="file-info">
           {{ file ? file.name : "当前尚未选择文件" }}
@@ -69,13 +84,19 @@
           :formatter="formatDate">
         </el-table-column>
         <el-table-column
-          label="部门"
+          label="发布部门"
           prop="apart"
           :formatter="formatDepartment">
         </el-table-column>
         <el-table-column
           prop="author"
           label="发布者">
+        </el-table-column>
+        <el-table-column
+          v-if="isWorkFile"
+          label="接收部门"
+          prop="to_apart"
+          :formatter="formatDepartment">
         </el-table-column>
         <el-table-column
           label="文件名"
@@ -119,6 +140,7 @@ import File from '@/apis/File'
 import departments from '@/constant/departmentInfo'
 
 export default {
+  name: 'file',
   data () {
     return {
       // fileCilent是封装的api对象，用来发送请求
@@ -128,6 +150,8 @@ export default {
       departmentOptions: departments,
       dialogVisible: false,
       dialogLoading: false,
+      // toDepartment为接收部门
+      toDepartment: '',
       // file是上传的文件对象
       file: null,
       loading: false,
@@ -142,6 +166,13 @@ export default {
       switch (this.$route.params.fileType) {
         case 'download': return '下载区'
         case 'workfile': return '工作区'
+      }
+    },
+    isWorkFile () {
+      if (this.$route.params.fileType === 'workfile') {
+        return true
+      } else {
+        return false
       }
     }
   },
@@ -182,20 +213,32 @@ export default {
     },
     openDialog () {
       this.file = null
+      // el-dialog组件在没打开时没渲染到页面，因此第一次打开时this.$refs.fileInput为undefined
+      if (this.$refs.fileInput) {
+        this.$refs.fileInput.value = ''
+      }
       this.dialogVisible = true
     },
-    addFile (e) {
-      this.file = e.target.files[0]
+    addFile () {
+      this.file = this.$refs.fileInput.files[0]
     },
     uploadFile () {
       if (!this.file) {
         this.$message.warning('请选择要上传的文件')
         return
       }
-      this.dialogLoading = true
       const data = {
         upload: this.file
       }
+      if (this.$route.params.fileType === 'workfile') {
+        if (!this.toDepartment) {
+          this.$message.warning('请选择接收部门')
+          return
+        } else {
+          data.to_apart = this.toDepartment
+        }
+      }
+      this.dialogLoading = true
       this.fileClient.upload(data)
         .then(() => {
           this.dialogVisible = false
@@ -289,8 +332,13 @@ export default {
     this.fileClient = new File(fileType)
   },
   beforeRouteUpdate (to, from, next) {
+    // 初始化状态
     this.resetSearch()
     this.hasSearched = false
+    this.searchData = []
+    // 更新fileClient对象
+    let fileType = to.params.fileType
+    this.fileClient = new File(fileType)
     next()
   }
 }
@@ -325,6 +373,10 @@ export default {
   &:hover {
     filter: brightness(1.08);
   }
+}
+
+.to-department-select {
+  margin-bottom: 20px;
 }
 
 #fileInput {

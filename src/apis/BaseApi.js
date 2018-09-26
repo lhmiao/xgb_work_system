@@ -3,7 +3,7 @@ import qs from 'qs'
 
 const clientConfig = {
   baseURL: '/office/public',
-  timeout: 10000
+  timeout: 30000
 }
 
 export default class BaseApi {

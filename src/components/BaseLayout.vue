@@ -6,7 +6,7 @@
         <my-aside></my-aside>
       </el-aside>
       <el-main>
-        <keep-alive exclude="login,notificationDetail,resetPassword">
+        <keep-alive exclude="login,notificationDetail,resetPassword,file">
           <router-view></router-view>
         </keep-alive>
       </el-main>
