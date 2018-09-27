@@ -60,10 +60,15 @@
         <span class="file-info">
           {{ file ? file.name : "当前尚未选择文件" }}
         </span>
-        <p class="tips">
-          允许的文件类型：
-          jpg, gif, jpeg, rar, pdf, zip, doc, docx, xls, xlsx, ppt, pptx
-        </p>
+        <div class="tips">
+          <p>
+            允许的文件类型：
+            jpg, gif, jpeg, rar, pdf, zip, doc, docx, xls, xlsx, ppt, pptx
+          </p>
+          <p v-if="isWorkFile">
+            注：工作区文件只有辅导员才能上传
+          </p>
+        </div>
         <span slot="footer">
           <el-button @click="dialogVisible = false">取 消</el-button>
           <el-button
@@ -231,6 +236,11 @@ export default {
         upload: this.file
       }
       if (this.$route.params.fileType === 'workfile') {
+        // 工作区文件只有辅导员才能上传
+        if (this.$store.state.userInfo.authority !== 1) {
+          this.$message.warning('工作区文件只有辅导员才能上传')
+          return
+        }
         if (!this.toDepartment) {
           this.$message.warning('请选择接收部门')
           return
@@ -384,9 +394,13 @@ export default {
 }
 
 .tips {
-  margin-left: 10px;
+  margin-left: 20px;
   font-size: 13px;
   color: #888;
+
+  p + p {
+    margin-top: 20px;
+  }
 }
 
 .search-file {
