@@ -67,6 +67,8 @@ export default {
 
 <style lang="scss" scoped>
 .my-header {
+  position: relative;
+  z-index: 99;
   display: flex;
   flex-flow: row nowrap;
   justify-content: space-between;
@@ -75,7 +77,8 @@ export default {
   padding: 0 70px;
   font-size: 18px;
   color: #037ef3;
-  border-bottom: 1px solid #e0e0e0;
+  // border-bottom: 1px solid #e0e0e0;
+  box-shadow: 0 0 1px rgba(0, 0, 0, .2);
 
   .title {
     cursor: pointer;
