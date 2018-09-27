@@ -394,7 +394,7 @@ export default {
 }
 
 .tips {
-  margin-left: 20px;
+  margin-left: 10px;
   font-size: 13px;
   color: #888;
 
