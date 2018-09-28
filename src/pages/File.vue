@@ -78,10 +78,10 @@
         </span>
       </el-dialog>
     </div>
-    <div class="search-data" v-if="hasSearched">
+    <div class="search-data">
       <el-table
-        v-loading="loading"
-        :data="searchData"
+        v-loading="dataSearchLoading"
+        :data="dataSearch"
         border>
         <el-table-column
           label="日期"
@@ -159,9 +159,8 @@ export default {
       toDepartment: '',
       // file是上传的文件对象
       file: null,
-      loading: false,
-      hasSearched: false,
-      searchData: [],
+      dataSearchLoading: false,
+      dataSearch: [],
       pageCount: 0,
       currentPage: 1
     }
@@ -183,12 +182,7 @@ export default {
   },
   methods: {
     searchFile () {
-      if (!(this.department || this.keyword)) {
-        this.$message.error('请选择部门或输入关键词')
-        return
-      }
-      this.loading = true
-      this.hasSearched = true
+      this.dataSearchLoading = true
       const params = {
         page: this.currentPage,
         apart: this.department,
@@ -196,7 +190,7 @@ export default {
       }
       this.fileClient.search(params)
         .then(res => {
-          this.searchData = res.content
+          this.dataSearch = res.content
           this.pageCount = res.all_pages
         })
         .catch(err => {
@@ -209,7 +203,7 @@ export default {
           }
         })
         .finally(() => {
-          this.loading = false
+          this.dataSearchLoading = false
         })
     },
     resetSearch () {
@@ -253,12 +247,8 @@ export default {
         .then(() => {
           this.dialogVisible = false
           this.file = null
-          if (this.department || this.keyword) {
-            this.$message.success('上传文件成功')
-            this.searchFile()
-          } else {
-            this.$message.success('上传文件成功，请重新搜索该文件或刷新页面确认')
-          }
+          this.$message.success('上传文件成功')
+          this.searchFile()
         })
         .catch(err => {
           if (err.errCode === 2) {
@@ -316,7 +306,7 @@ export default {
         return this.fileClient.delete(data)
       }).then(() => {
         this.$message.success('删除成功')
-        this.searchData.splice(index, 1)
+        this.dataSearch.splice(index, 1)
       }).catch(err => {
         if (err.toString() === 'cancel') {
           this.$message.info('取消删除')
@@ -336,19 +326,19 @@ export default {
       this.searchFile()
     }
   },
-  created () {
+  mounted () {
     let fileType = this.$route.params.fileType
     // 根据文件类型创建fileClient对象
     this.fileClient = new File(fileType)
+    this.searchFile()
   },
   beforeRouteUpdate (to, from, next) {
-    // 初始化状态
-    this.resetSearch()
-    this.hasSearched = false
-    this.searchData = []
     // 更新fileClient对象
     let fileType = to.params.fileType
     this.fileClient = new File(fileType)
+    // 初始化状态
+    this.resetSearch()
+    this.searchFile()
     next()
   }
 }

@@ -54,10 +54,10 @@
         </span>
       </el-dialog>
     </div>
-    <div class="search-data" v-if="hasSearched">
+    <div class="search-data">
       <el-table
-        v-loading="searchDataLoading"
-        :data="searchData"
+        v-loading="dataSearchLoading"
+        :data="dataSearch"
         border>
         <el-table-column
           label="日期"
@@ -126,13 +126,12 @@ export default {
       department: '',
       keyword: '',
       departmentOptions: departments,
-      searchDataLoading: false,
+      dataSearchLoading: false,
       dialogVisible: false,
       dialogLoading: false,
       newTitle: '',
       newContent: '',
-      hasSearched: false,
-      searchData: [],
+      dataSearch: [],
       pageCount: 0,
       currentPage: 1
     }
@@ -143,12 +142,7 @@ export default {
       this.keyword = ''
     },
     searchNotification () {
-      if (!(this.department || this.keyword)) {
-        this.$message.warning('请选择部门或输入关键词')
-        return
-      }
-      this.searchDataLoading = true
-      this.hasSearched = true
+      this.dataSearchLoading = true
       const params = {
         page: this.currentPage,
         keywords: this.keyword,
@@ -156,7 +150,7 @@ export default {
       }
       notification.search(params)
         .then(res => {
-          this.searchData = res.content
+          this.dataSearch = res.content
           this.pageCount = res.all_pages
         })
         .catch(err => {
@@ -169,7 +163,7 @@ export default {
           }
         })
         .finally(() => {
-          this.searchDataLoading = false
+          this.dataSearchLoading = false
         })
     },
     openDialog () {
@@ -195,12 +189,8 @@ export default {
           this.dialogVisible = false
           this.newTitle = ''
           this.newContent = ''
-          if (this.department || this.keyword) {
-            this.$message.success('发布新通知成功')
-            this.searchNotification()
-          } else {
-            this.$message.success('发布新通知成功，请重新搜索该通知或刷新页面确认')
-          }
+          this.$message.success('发布新通知成功')
+          this.searchNotification()
         })
         .catch(err => {
           if (err.errCode === 2) {
@@ -236,7 +226,7 @@ export default {
         return notification.delete(params)
       }).then(() => {
         this.$message.success('删除成功')
-        this.searchData.splice(index, 1)
+        this.dataSearch.splice(index, 1)
       }).catch(err => {
         if (err.toString() === 'cancel') {
           this.$message.info('取消删除')
@@ -255,6 +245,9 @@ export default {
       this.currentPage = page
       this.searchNotification()
     }
+  },
+  mounted () {
+    this.searchNotification()
   }
 }
 </script>

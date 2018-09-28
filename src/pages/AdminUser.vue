@@ -76,7 +76,7 @@
         </span>
       </el-dialog>
     </div>
-    <div class="user-data" v-if="hasSearched">
+    <div class="user-data">
       <el-table
         v-loading="userDataLoading"
         :data="userData"
@@ -189,7 +189,6 @@ export default {
       trueNameEdit: '',
       passwordEdit: '',
       rowEdit: null,
-      hasSearched: false,
       userData: [],
       userDataLoading: false,
       identityByAuth,
@@ -199,11 +198,6 @@ export default {
   },
   methods: {
     searchUser () {
-      if (!this.departmentSearch) {
-        this.$message.warning('请选择要搜索的部门')
-        return
-      }
-      this.hasSearched = true
       this.userDataLoading = true
       const params = {
         apart: this.departmentSearch,
@@ -271,12 +265,8 @@ export default {
           this.trueNameAdd = ''
           this.passwordAdd = ''
           this.dialogAddVisible = false
-          if (this.departmentSearch) {
-            this.$message.success('添加新用户成功')
-            this.searchUser()
-          } else {
-            this.$message.success('添加新用户成功，请重新搜索该用户或刷新页面确认结果')
-          }
+          this.$message.success('添加新用户成功')
+          this.searchUser()
         })
         .catch(err => {
           if (err.errCode === 2) {
@@ -328,12 +318,8 @@ export default {
           this.trueNameEdit = ''
           this.passwordEdit = ''
           this.dialogEditVisible = false
-          if (this.departmentSearch) {
-            this.$message.success('修改用户信息成功')
-            this.searchUser()
-          } else {
-            this.$message.success('修改用户信息成功，请重新搜索该用户或刷新页面确认结果')
-          }
+          this.$message.success('修改用户信息成功')
+          this.searchUser()
         })
         .catch(err => {
           if (err.errCode === 2) {
@@ -385,6 +371,9 @@ export default {
       this.currentPage = page
       this.searchUser()
     }
+  },
+  mounted () {
+    this.searchUser()
   }
 }
 </script>
