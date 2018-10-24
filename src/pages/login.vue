@@ -83,7 +83,7 @@ export default {
   created () {
     if (this.$store.state.isLoggedIn) {
       this.$message.warning('您已登录，请勿重复登录')
-      this.$router.go(-1)
+      this.$router.replace('/index')
       return
     }
     if (localStorage.loginInfo === undefined) {

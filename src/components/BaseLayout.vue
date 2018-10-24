@@ -35,12 +35,13 @@ export default {
       .then(res => {
         this.$store.commit('login')
         this.$store.commit('initUserInfo', res)
+        this.$router.replace('/index')
       })
       .catch(err => {
         if (!err.errCode) {
           this.$message.error('网络错误：' + err)
         }
-        this.$router.push('/login')
+        this.$router.replace('/login')
       })
   },
   components: {

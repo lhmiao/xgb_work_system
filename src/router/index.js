@@ -1,6 +1,7 @@
 import Vue from 'vue'
 import Router from 'vue-router'
 import BaseLayout from '@/components/BaseLayout'
+import Loading from '@/pages/Loading'
 import Index from '@/pages/Index'
 import Login from '@/pages/login'
 import Notification from '@/pages/Notification'
@@ -20,8 +21,13 @@ export default new Router({
       path: '/',
       name: 'baseLayout',
       component: BaseLayout,
-      redirect: '/index',
+      redirect: '/loading',
       children: [
+        {
+          path: '/loading',
+          name: 'loading',
+          component: Loading
+        },
         {
           path: '/index',
           name: 'index',
