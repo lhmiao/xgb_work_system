@@ -212,7 +212,7 @@ export default {
         })
     },
     getDepartmentType (row, column, cellValue, index) {
-      return this.departmentType[cellValue]
+      return this.departmentType[cellValue] || '未知部门类型'
     },
     handleDelete (index, id) {
       this.$confirm('此操作将永久删除该部门, 是否继续?', '提示', {

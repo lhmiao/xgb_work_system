@@ -362,10 +362,10 @@ export default {
       })
     },
     getDepartment (row, column, cellValue, index) {
-      return departmentOptions[cellValue]
+      return departmentOptions[cellValue] || '未知部门'
     },
     getIdentityByAuth (row, column, cellValue, index) {
-      return identityByAuth[cellValue]
+      return identityByAuth[cellValue] || '无效权限'
     },
     handleCurrentChange (page) {
       this.currentPage = page
