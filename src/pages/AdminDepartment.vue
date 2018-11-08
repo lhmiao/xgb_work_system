@@ -291,7 +291,7 @@ export default {
   align-items: center;
 
   .el-select {
-    flex: 0 0 160px;
+    flex: 0 0 170px;
     margin-right: 10px;
   }
 }
