@@ -39,8 +39,6 @@ export default {
         // 如果toPath为'/loading'说明是初次打开页面，则让用户前往'/index'
         if (toPath === '/loading') {
           this.$router.replace('/index')
-        } else {
-          this.$router.replace(toPath)
         }
       })
       .catch(err => {
